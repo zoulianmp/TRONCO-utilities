@@ -1,0 +1,49 @@
+is.compliant = function(x, err.fun, stage=FALSE)
+{
+	# Check if x is defined
+  	if(is.null(x) || is.na(x))
+		stop(paste(err.fun, ': input \'x\' is null.'))
+
+	# Check then if x is a list
+  	if(!is.list(x))
+		stop(paste(err.fun, ': input \'x\' is not a list.'))
+
+	# Check then if x has required fields
+    if(is.null(x$genotypes) || is.na(x$genotypes))
+		stop(paste(err.fun, ': input \'x\' has no genotypes field.'))	
+	else
+		if(!is.matrix(x$genotypes))	stop(paste(err.fun, ': attribute genotypes in  \'x\' is not a matrix.'))	
+
+	if(is.null(x$annotations) || is.na(x$annotations))
+		stop(paste(err.fun, ': input \'x\' has no annotations field.'))
+	else
+		if(!is.matrix(x$annotations)) stop(paste(err.fun, ': attribute annotations in  \'x\' is not a matrix.'))	
+
+	if(is.null(x$types) || is.na(x$types))
+		stop(paste(err.fun, ': input \'x\' has no types field.'))
+	else
+		if(!is.matrix(x$types)) stop(paste(err.fun, ': attribute types in  \'x\' is not a matrix.'))	
+	
+	if(stage == TRUE && (is.null(x$stage) || is.na(x$stage)))
+		stop(paste(err.fun, ': input \'x\' has no stage field.'))
+	else
+		if(stage == TRUE && !is.matrix(x$types)) stop(paste(err.fun, ': attribute stage in  \'x\' is not a matrix.'))	
+
+	# Annotations sould be present for all genotypes columns
+  	if(nrow(x$annotations) != ncol(x$genotypes) ) 
+		stop(paste(err.fun, ': input \'x\' has less annotations than expected.'))			
+ 	if(!all(colnames(x$genotypes) == rownames(x$annotations))) 
+		stop(paste(err.fun, ': input \'x\' has inconsistent annotations.'))			
+
+	# Types should be defined for every annotation
+   	if(nrow(x$types) != length(unique(x$annotations[,1]))) 
+		stop(paste(err.fun, ': input \'x\' has less types than expected.'))			
+ 	if(!all(unique(x$annotations[,1]) %in% rownames(x$types))) 
+		stop(paste(err.fun, ': input \'x\' has inconsistent types.'))				
+		
+ 	# Stage should be defined for every samples
+  	if(stage == TRUE && nrow(x$stages) != nrow(x$genotypes)) 
+		stop(paste(err.fun, ': input \'x\' has less stages than expected.'))			
+ 	if(stage == TRUE && !all(rownames(x$stages) == rownames(x$genotypes))) 
+		stop(paste(err.fun, ': input \'x\' has inconsistent stages.'))			
+ }
