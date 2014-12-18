@@ -35,11 +35,8 @@ likertToClus <- function(cluster_result, sample_stage, cluster_prefix='K', sampl
   result
 }
 
-test_likertToClus <- function() {
+test_likertToClus <- function(K = 4, S = 6, sample = 250) {
   # sample data
-  K <- 4
-  S <- 6
-  sample <- 250
   example_label <- sample(1:K, size = sample, replace = T)
   example_stage <- sample(1:S, size = sample, replace = T)
 
