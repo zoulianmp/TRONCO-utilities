@@ -1,6 +1,8 @@
 #
 # oncoPrint : plot a genotype
 #
+
+# AUXILARY PRIVATE FUNCTION
 # This function sorts the matrix for better visualization of mutual exclusivity across genes
 exclusivity.sort <- function(M) {
 	geneOrder <- sort(rowSums(M), decreasing=TRUE, index.return=TRUE)$ix;
@@ -38,7 +40,8 @@ oncoprint <- function(x, excl.sort=TRUE, col.cluster=FALSE, row.cluster=FALSE, d
     	install.packages('RColorBrewer', dependencies = TRUE)
     	library(RColorBrewer)
   	}
-
+	
+	cat(paste('*** Oncoprint with attributes: stage=', ann.stage, ', score=', ann.score, '\n', sep=''))
 	is.compliant(x, 'oncoprint', stage=ann.stage)
 	
 	# We reverse the heatmap under the assumption that ncol(data) << nrow(data)
@@ -66,10 +69,31 @@ oncoprint <- function(x, excl.sort=TRUE, col.cluster=FALSE, row.cluster=FALSE, d
 	score.gradient = (colorRampPalette(brewer.pal(6, score.color))) (max(nmut))
 	annotation_colors = list(score = score.gradient)
 	if(ann.stage == TRUE){ 
-		num.stages = length(unlist(unique(x$stage)))
+		
+		x$stages[,1] = sample(1:4, nrow(x$stages), replace=T)
+		
+		tmp = sort(unique(x$stages), na.last=T)
+		print(tmp)
+		num.stages = length(tmp)
+		factor_stages = factor(x$stages, labels = tmp, exclude = NULL)
+		
+		print(factor_stages)
+		# print(as.integer((unique(x$stages))))
+		
+		annotation = data.frame(stage=factor_stages, score=nmut)
+		
+		print(num.stages)
+			
 		stage.color.attr = brewer.pal(n=num.stages, name=stage.color)		
 		annotation_colors = list(stage=stage.color.attr, score=score.gradient)
+		
+		print(annotation_colors)
 	}	
+	
+	print(annotation_colors)
+	# print(annotation)
+	# str(annotation_colors)
+	# str(annotation)
 	
 	# Display also event frequency, which gets computed now
 	genes.freq = rowSums(data)/nc
@@ -92,11 +116,13 @@ oncoprint <- function(x, excl.sort=TRUE, col.cluster=FALSE, row.cluster=FALSE, d
    	# Augment gene names with frequencies and prepare legend labels
 	gene.names = x$annotations[rownames(data),2]
 	rownames(data) = paste(round(100 * genes.freq, 2) ,'% ', gene.names, sep='')
-	legend.labels = c('No alt.', unique(x$annotations[rn,1]))
+	legend.labels = c('0', unique(x$annotations[rn,1]))
 
 	# Augment title
 	title = paste(title, ' (', nc,' samples,  ', nr, ' events)', sep='')
 	
+	print(title)	
+		
 	# Pheatmap
 	if(ann.score == TRUE || ann.stage == TRUE)  
 	 	pheatmap(data, 
