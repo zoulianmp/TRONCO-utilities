@@ -10,3 +10,13 @@
 
 # RStudio files
 .Rproj.user/
+
+testing/gene_id_symbol
+
+testing/gene_indiv_mat
+
+testing/idx.k4.txt
+
+testing/sample_id
+
+testing/sample_stage

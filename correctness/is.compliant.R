@@ -1,3 +1,9 @@
+# Check if 'x' is compliant with TRONCO's input: that is if it has dataframes x$genotypes, x$annotations, x$types and x$stage (optional)
+# - x: list of dataframe to check
+# - err.fun: string which identifies the function which called is.compliant
+# - stage: boolean flag to check x$stage datagframe
+#
+# Returns: on error stops the computation
 is.compliant = function(x, err.fun, stage=FALSE)
 {
 	# Check if x is defined
